@@ -20,7 +20,7 @@ public class EmailController {
 
     @GetMapping("/send-welcome")
     public String sendWelcomeEmail() {
-        String to = "recipient@example.com";
+        String to = "m94pavan@gmail.com";
         String subject = "Welcome to Our Platform!";
         String templateName = "welcome-email";
 
