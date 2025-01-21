@@ -1,16 +1,14 @@
 package com.example.emailTemplateManagement.service;
 
+import com.example.emailTemplateManagement.model.EmailTemplate;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring6.SpringTemplateEngine;
 
 
-import java.util.Map;
 
 @Service
 public class EmailService {
@@ -18,22 +16,25 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Autowired
-    private SpringTemplateEngine templateEngine;
+    public void sendEmail(EmailTemplate emailTemplate) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
-    public void sendEmail(String to, String subject, String templateName, Map<String, Object> templateModel) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        // Set mandatory fields
+        helper.setFrom(emailTemplate.getFromEmail());
+        helper.setTo(emailTemplate.getToEmail());
+        helper.setSubject(emailTemplate.getSubject());
+        helper.setText(emailTemplate.getBody(), true); // HTML support
 
-        // Prepare email content using Thymeleaf
-        Context context = new Context();
-        context.setVariables(templateModel);
-        String htmlContent = templateEngine.process(templateName, context);
+        // Add optional fields (CC and BCC)
+        if (emailTemplate.getCcEmail() != null && !emailTemplate.getCcEmail().isEmpty()) {
+            helper.setCc(emailTemplate.getCcEmail());
+        }
+        if (emailTemplate.getBccEmail() != null && !emailTemplate.getBccEmail().isEmpty()) {
+            helper.setBcc(emailTemplate.getBccEmail());
+        }
 
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(htmlContent, true); // true indicates HTML
-
-        mailSender.send(message);
+        // Send the email
+        mailSender.send(mimeMessage);
     }
 }
