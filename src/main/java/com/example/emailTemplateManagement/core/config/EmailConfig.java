@@ -1,4 +1,4 @@
-package com.example.emailTemplateManagement.config;
+package com.example.emailTemplateManagement.core.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
