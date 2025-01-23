@@ -8,7 +8,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-
+import java.util.Map;
 
 @Service
 public class EmailService {
@@ -20,11 +20,14 @@ public class EmailService {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
+        // Replace placeholders in the email body
+        String processedBody = processPlaceholders(emailTemplate.getBody(), emailTemplate.getPlaceholders());
+
         // Set mandatory fields
         helper.setFrom(emailTemplate.getFromEmail());
         helper.setTo(emailTemplate.getToEmail());
         helper.setSubject(emailTemplate.getSubject());
-        helper.setText(emailTemplate.getBody(), true); // HTML support
+        helper.setText(processedBody, true); // HTML support
 
         // Add optional fields (CC and BCC)
         if (emailTemplate.getCcEmail() != null && !emailTemplate.getCcEmail().isEmpty()) {
@@ -36,5 +39,16 @@ public class EmailService {
 
         // Send the email
         mailSender.send(mimeMessage);
+    }
+
+    private String processPlaceholders(String body, Map<String, String> placeholders) {
+        if (placeholders == null || placeholders.isEmpty()) {
+            return body;
+        }
+        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+            String placeholder = "\\{" + entry.getKey() + "\\}"; // Match {key}
+            body = body.replaceAll(placeholder, entry.getValue());
+        }
+        return body;
     }
 }

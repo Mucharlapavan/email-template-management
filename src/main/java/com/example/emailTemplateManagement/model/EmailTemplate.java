@@ -4,17 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmailTemplate {
 
-    private String templateName;
     private String fromEmail;
     private String toEmail;
-    private String ccEmail;  // Optional
-    private String bccEmail; // Optional
+    private String ccEmail;
+    private String bccEmail;
     private String subject;
-    private String body;
-    private String triggerEvent;
+    private String body; // Contains placeholders like {name}
+    private Map<String, String> placeholders; // Dynamic data for placeholders
+
 }
