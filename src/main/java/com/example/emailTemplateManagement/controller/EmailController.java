@@ -7,23 +7,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/emails")
+@RequestMapping("/api/email")
 public class EmailController {
 
     @Autowired
     private EmailService emailService;
 
-    @PostMapping("/send")
-    public ResponseEntity<String> sendEmail(@RequestBody EmailTemplate emailTemplate) {
+    @PostMapping("/send-email")
+    public ResponseEntity<String> sendEmail(
+            @RequestBody EmailTemplate emailTemplate
+    ) {
         try {
-            emailService.sendEmail(emailTemplate);
-            return ResponseEntity.ok("Email sent successfully!");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to send email: " + e.getMessage());
+            emailService.sendEmailWithAttachments(emailTemplate);
+            return ResponseEntity.ok("Email sent successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email: " + e.getMessage());
         }
     }
 }

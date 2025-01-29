@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -11,12 +12,15 @@ import java.util.Map;
 @NoArgsConstructor
 public class EmailTemplate {
 
-    private String fromEmail;
-    private String toEmail;
-    private String ccEmail;
-    private String bccEmail;
-    private String subject;
-    private String body; // Contains placeholders like {name}
-    private Map<String, String> placeholders; // Dynamic data for placeholders
+    private String fromEmail; // Sender's email
+    private String toEmail;   // Recipient's email
+    private String subject;   // Email subject
+    private String body;      // Email body (HTML or plain text)
+    private String ccEmail;   // Optional CC
+    private String bccEmail;  // Optional BCC
+    private Map<String, String> placeholders; // Key-value pairs for placeholders in the email body
+    private List<String> attachments;
+    private String url; // New property for the file URL
+
 
 }
